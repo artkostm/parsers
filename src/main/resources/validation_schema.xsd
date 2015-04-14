@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Park">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="unbounded" name="PlantGroup">
+          <xs:complexType mixed="true">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="ConiferuousBush">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" default="None" />
+                  <xs:attribute name="height" type="xs:decimal" default="0" />
+                  <xs:attribute name="crownWidth" type="xs:decimal" default="0" />
+                  <xs:attribute name="age" type="xs:unsignedInt" use="optional" />
+                  <xs:attribute name="crownSymmetry" type="xs:boolean" use="optional" />
+                  <xs:attribute name="needelColor" type="xs:string" use="optional" />
+                </xs:complexType>
+              </xs:element>
+
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="ConiferuousTree">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" default="None" />
+                  <xs:attribute name="height" type="xs:decimal" default="0" />
+                  <xs:attribute name="crownWidth" type="xs:decimal" default="0" />
+                  <xs:attribute name="trunkWidth" type="xs:decimal" use="optional" />
+                  <xs:attribute name="age" type="xs:unsignedInt" use="optional" />
+                  <xs:attribute name="needelColor" type="xs:string" use="optional" />
+                </xs:complexType>
+              </xs:element>
+
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="DeciduousBush">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" default="None" />
+                  <xs:attribute name="height" type="xs:decimal" default="0" />
+                  <xs:attribute name="crownWidth" type="xs:decimal" default="0" />
+                  <xs:attribute name="age" type="xs:unsignedInt" use="optional" />
+                  <xs:attribute name="crownSymmetry" type="xs:boolean" use="optional" />
+                  <xs:attribute name="leafColor" type="xs:string" use="optional" />
+                  <xs:attribute name="leafShape" type="xs:string" use="optional" />
+                </xs:complexType>
+              </xs:element>
+
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="DeciduousTree">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" default="None" />
+                  <xs:attribute name="height" type="xs:decimal" default="0" />
+                  <xs:attribute name="crownWidth" type="xs:decimal" default="0" />
+                  <xs:attribute name="age" type="xs:unsignedInt" use="optional" />
+                  <xs:attribute name="trunkWidth" type="xs:decimal" use="optional" />
+                  <xs:attribute name="leafColor" type="xs:string" use="optional" />
+                  <xs:attribute name="leafShape" type="xs:string" use="optional" />
+                </xs:complexType>
+              </xs:element>
+
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="FruitBush">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" default="None" />
+                  <xs:attribute name="height" type="xs:decimal" default="0" />
+                  <xs:attribute name="crownWidth" type="xs:decimal" default="0" />
+                  <xs:attribute name="age" type="xs:unsignedInt" use="optional" />
+                  <xs:attribute name="crownSymmetry" type="xs:boolean" use="optional" />
+                  <xs:attribute name="fruitColor" type="xs:string" use="optional" />
+                  <xs:attribute name="floweringTime" type="xs:string" use="optional" />
+                </xs:complexType>
+              </xs:element>
+
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="FruitTree">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" default="None" />
+                  <xs:attribute name="height" type="xs:decimal" default="0" />
+                  <xs:attribute name="crownWidth" type="xs:decimal" default="0" />
+                  <xs:attribute name="age" type="xs:unsignedInt" use="optional" />
+                  <xs:attribute name="trunkWidth" type="xs:decimal" use="optional" />
+                  <xs:attribute name="fruitColor" type="xs:string" use="optional" />
+                  <xs:attribute name="floweringTime" type="xs:string" use="optional" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="crownDensity" type="xs:decimal" use="optional" />
+            <xs:attribute name="shape" type="xs:string" use="optional" />
+            <xs:attribute name="symmetry" type="xs:boolean" use="optional" />
+            <xs:attribute name="color" type="xs:string" use="optional" />
+            <xs:attribute name="groupState" type="xs:boolean" use="optional" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

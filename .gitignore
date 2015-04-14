@@ -1,0 +1,10 @@
+/bin/
+/build/
+/.settings/
+/build/
+/.classpath
+/.project
+/bin/
+/test-reports/
+/logs/
+/.gradle/
