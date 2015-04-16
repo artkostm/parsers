@@ -4,20 +4,23 @@ import static org.reflections.ReflectionUtils.*;
 import static by.artkostm.androidparsers.core.AttributeResolver.*;
 
 import java.lang.reflect.Field;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import by.artkostm.androidparsers.core.annotations.DOMAttribute;
+import by.artkostm.androidparsers.core.annotations.XMLAttribute;
+import by.artkostm.androidparsers.core.annotations.XMLElement;
 
-public class ObjectBuilder<T> implements Builder<T>{
+public class XMLObjectBuilder<T> implements Builder<T>{
     
     private static final Logger log = Logger.getRootLogger();
 
     private final Class<T> type;
     
-    public ObjectBuilder(Class<T> type) {
+    public XMLObjectBuilder(Class<T> type) {
         this.type = type;
     }
     
@@ -36,11 +39,11 @@ public class ObjectBuilder<T> implements Builder<T>{
             throw new RuntimeException("Cannot get new instance by default constructor");
         }
         
-        for(Field f : getAllFields(type, withAnnotation(DOMAttribute.class))){
+        for(Field f : getAllFields(type, withAnnotation(XMLAttribute.class))){
             f.setAccessible(true);
             try {
-                final DOMAttribute atr = f.getAnnotation(DOMAttribute.class);
-                f.set(instance, resolveWithType(f.getType(), nnm, atr.name()));
+                final XMLAttribute atr = f.getAnnotation(XMLAttribute.class);
+                f.set(instance, resolveAttribute(f.getType(), nnm, atr.name()));
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 log.error("Cannot set value for field "+f.toGenericString());
                 throw new RuntimeException("Cannot set value for field "+f.toGenericString());

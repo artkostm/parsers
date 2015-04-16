@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -19,11 +20,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import by.artkostm.androidparsers.core.annotations.DOMElement;
-import by.artkostm.androidparsers.core.annotations.DOMElements;
-import by.artkostm.androidparsers.core.builders.ObjectBuilder;
+import by.artkostm.androidparsers.core.annotations.XMLElement;
+import by.artkostm.androidparsers.core.annotations.XMLElements;
+import by.artkostm.androidparsers.core.builders.XMLObjectBuilder;
 
-public class ElementEnhancer {
+public class XMLElementEnhancer implements Enhancer{
     
     private static final Logger log = Logger.getRootLogger();
     
@@ -31,42 +32,76 @@ public class ElementEnhancer {
     
     private Set<Class<?>> classes;
     
-    public ElementEnhancer(String pkg) {
+    public XMLElementEnhancer(String pkg) {
         reflections = new Reflections(new ConfigurationBuilder()
                                                 .setUrls(ClasspathHelper.forPackage(pkg))
                                                 .setScanners(new SubTypesScanner(), 
                                                         new TypeAnnotationsScanner()));
         
-        classes = reflections.getTypesAnnotatedWith(DOMElement.class);
+        classes = reflections.getTypesAnnotatedWith(XMLElement.class);
     }
     
     @SuppressWarnings("rawtypes")
-    public Object enhance(Node node){
+    @Override
+    public Object enhance(Object source){
+        Node node = (Node) source;
         Class<?> croot = findRootElement(node);
-        ObjectBuilder builder = new ObjectBuilder<>(croot);
+        XMLObjectBuilder builder = new XMLObjectBuilder<>(croot);
         Object root = builder.build(node);
         NodeList nl = node.getChildNodes();
         if (nl.getLength() > 0){
             for(int i = 0; i < nl.getLength(); i++){
                 if(nl.item(i) instanceof Element){
-                    Object el = enhance(nl.item(i));
-                    processElement(croot, root, el);
+                    Field ref = null;
+                    if(isElement(croot, nl.item(i).getNodeName(), ref)){
+                        Object el = enhance(nl.item(i));
+                        processElement(croot, root, el, ref);
+                    }else{
+                        Object el = enhance(nl.item(i));
+                        processElements(croot, root, el);
+                    }
                 }
             }
         }
         return root;
     }
     
+    @SuppressWarnings("unchecked")
+    private boolean isElement(Class<?> classParent, String childName, Field ref){
+        Set<Field> fields = getAllFields(classParent, withAnnotation(XMLElement.class));
+        for(Field f : fields){
+            XMLElement el = f.getAnnotation(XMLElement.class);
+            if(childName.equals(el.name())){
+                ref = f;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void processElement(Class<?> classParent, Object parent, Object child, Field ref){
+        ref.setAccessible(true);
+        try {
+            ref.set(parent, child);
+        } catch (IllegalArgumentException | SecurityException | IllegalAccessException e) {
+            log.error("Cannot set value for object  "+ref.toGenericString(), e);
+            throw new RuntimeException("Cannot set value for object "+ref.toGenericString());
+        }
+        finally{
+            ref.setAccessible(false);
+        }
+    }
+    
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void processElement(Class<?> classParent, Object parent, Object child){
-        Set<Field> fields = getAllFields(classParent, withAnnotation(DOMElements.class));
-        if (fields.size() != 1){
+    private void processElements(Class<?> classParent, Object parent, Object child){
+        Set<Field> fieldsForElements = getAllFields(classParent, withAnnotation(XMLElements.class));
+        if (fieldsForElements.size() != 1){
             return;
         }
-        Field f = (Field)fields.toArray()[0];
+        Field f = (Field)fieldsForElements.toArray()[0];
         f.setAccessible(true);
         try {
-            DOMElements els = f.getAnnotation(DOMElements.class);
+            XMLElements els = f.getAnnotation(XMLElements.class);
             Class<?> base = els.baseType();
             List<Class<?>> parents = new ArrayList<>();
             getParentClasses(child.getClass(), parents);
@@ -77,14 +112,17 @@ public class ElementEnhancer {
                 }
             }
             if (!extended){
-                log.error("Cannot add element to collection");
-                throw new RuntimeException("Cannot add element to collection");
+                log.warn("Cannot add element to collection");
+                return;
             }
             Collection list = (Collection)f.get(parent);
             list.add(child);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
             log.error("Cannot set value for generic type "+f.toGenericString(), e);
             throw new RuntimeException("Cannot set value for generic type "+f.toGenericString());
+        }
+        finally{
+            f.setAccessible(false);
         }
     }
     
@@ -96,10 +134,24 @@ public class ElementEnhancer {
      */
     private Class<?> findRootElement(Node node){
         for(Class<?> c : classes){
-            if(c.getSimpleName().equals(node.getNodeName())){
+            XMLElement el = c.getAnnotation(XMLElement.class);
+            if(el == null){
+                log.error("No class definitiof found for "+node.getNodeName()+" element");
+                throw new RuntimeException("No class definitiof found for "+node.getNodeName()+" element");
+            }
+            if(el.name().equals(node.getNodeName())){
                 return c;
             }
         }
+        /**
+         * !!!
+         * !!!
+         * !!!
+         * Check fields marked with XMLElement annotation !!!!
+         * !!!
+         * !!!
+         * !!!
+         */
         log.error("No class definitiof found for "+node.getNodeName()+" element");
         throw new RuntimeException("No class definitiof found for "+node.getNodeName()+" element");
     }
