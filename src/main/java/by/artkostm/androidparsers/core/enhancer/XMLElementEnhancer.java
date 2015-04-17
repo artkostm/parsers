@@ -132,6 +132,7 @@ public class XMLElementEnhancer implements Enhancer{
      * @param node
      * @return class of found element if exists
      */
+    @SuppressWarnings("unchecked")
     private Class<?> findRootElement(Node node){
         for(Class<?> c : classes){
             XMLElement el = c.getAnnotation(XMLElement.class);
@@ -141,6 +142,14 @@ public class XMLElementEnhancer implements Enhancer{
             }
             if(el.name().equals(node.getNodeName())){
                 return c;
+            }
+            Set<Field> fields = getAllFields(c, withAnnotation(XMLElement.class));
+            for(Field f : fields){
+                f.setAccessible(true);
+                XMLElement e = f.getAnnotation(XMLElement.class);
+                if(e.name().equals(node.getNodeName())){
+                    return f.getType();
+                }
             }
         }
         /**
