@@ -2,6 +2,7 @@ package by.artkostm.androidparsers.core.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -61,6 +62,21 @@ public final class DOMUtil {
         } catch (ParserConfigurationException | SAXException | IOException e) {
             log.error("Can't parse " + file.getName() + " file", e);
             throw new RuntimeException("Can't parse " + file.getName() + " file", e);
+        }
+    }
+    
+    public static Node getDocument(InputStream is){
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder;
+        try {
+            builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(is);
+//            XsdSchemaDOMValidator.validate(doc);
+            Element root = doc.getDocumentElement();
+            return root;
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            log.error("Can't parse " + is.toString() + " stream", e);
+            throw new RuntimeException("Can't parse " + is.toString() + " stream", e);
         }
     }
     

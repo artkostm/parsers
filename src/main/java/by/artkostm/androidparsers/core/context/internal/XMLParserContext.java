@@ -20,7 +20,7 @@ public class XMLParserContext implements ParserContext
     }
 
     @Override
-    public <T> Unmarshaller<T> getUnmarshaller()
+    public <T> Unmarshaller<T> getUnmarshaller(Class<?>...cls)
     {
         final Unmarshaller<T> u = new Unmarshaller<T>() {
             @SuppressWarnings("unchecked")

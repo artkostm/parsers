@@ -11,6 +11,6 @@ public interface ParserContext{
         public T unmarshal(File file);
     }
 
-    public <T> Unmarshaller<T> getUnmarshaller();
+    public <T> Unmarshaller<T> getUnmarshaller(Class<?> ... cls);
     public <T> Marshaller<T> getMarshaller(Class<?> cls);
 }

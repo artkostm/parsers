@@ -1,18 +1,15 @@
 package by.artkostm.androidparsers.core.builders;
 
 import static org.reflections.ReflectionUtils.*;
-import static by.artkostm.androidparsers.core.AttributeResolver.*;
+import static by.artkostm.androidparsers.core.FieldsResolver.*;
 
 import java.lang.reflect.Field;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import by.artkostm.androidparsers.core.annotations.XMLAttribute;
-import by.artkostm.androidparsers.core.annotations.XMLElement;
 
 public class XMLObjectBuilder<T> implements Builder<T>{
     

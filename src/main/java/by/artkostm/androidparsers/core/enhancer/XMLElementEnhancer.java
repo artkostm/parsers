@@ -52,45 +52,47 @@ public class XMLElementEnhancer implements Enhancer{
         if (nl.getLength() > 0){
             for(int i = 0; i < nl.getLength(); i++){
                 if(nl.item(i) instanceof Element){
-                    Field ref = null;
-                    if(isElement(croot, nl.item(i).getNodeName(), ref)){
-                        Object el = enhance(nl.item(i));
-                        processElement(croot, root, el, ref);
-                    }else{
-                        Object el = enhance(nl.item(i));
-                        processElements(croot, root, el);
-                    }
+//                    Field ref = null;
+                    Object el = enhance(nl.item(i));
+                    processElements(croot, root, el);
+//                    if(isElement(croot, nl.item(i).getNodeName(), ref)){
+//                        Object el = enhance(nl.item(i));
+//                        processElement(croot, root, el, ref);
+//                    }else{
+//                        Object el = enhance(nl.item(i));
+//                        processElements(croot, root, el);
+//                    }
                 }
             }
         }
         return root;
     }
     
-    @SuppressWarnings("unchecked")
-    private boolean isElement(Class<?> classParent, String childName, Field ref){
-        Set<Field> fields = getAllFields(classParent, withAnnotation(XMLElement.class));
-        for(Field f : fields){
-            XMLElement el = f.getAnnotation(XMLElement.class);
-            if(childName.equals(el.name())){
-                ref = f;
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    private void processElement(Class<?> classParent, Object parent, Object child, Field ref){
-        ref.setAccessible(true);
-        try {
-            ref.set(parent, child);
-        } catch (IllegalArgumentException | SecurityException | IllegalAccessException e) {
-            log.error("Cannot set value for object  "+ref.toGenericString(), e);
-            throw new RuntimeException("Cannot set value for object "+ref.toGenericString());
-        }
-        finally{
-            ref.setAccessible(false);
-        }
-    }
+//    @SuppressWarnings("unchecked")
+//    private boolean isElement(Class<?> classParent, String childName, Field ref){
+//        Set<Field> fields = getAllFields(classParent, withAnnotation(XMLElement.class));
+//        for(Field f : fields){
+//            XMLElement el = f.getAnnotation(XMLElement.class);
+//            if(childName.equals(el.name())){
+//                ref = f;
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//    
+//    private void processElement(Class<?> classParent, Object parent, Object child, Field ref){
+//        ref.setAccessible(true);
+//        try {
+//            ref.set(parent, child);
+//        } catch (IllegalArgumentException | SecurityException | IllegalAccessException e) {
+//            log.error("Cannot set value for object  "+ref.toGenericString(), e);
+//            throw new RuntimeException("Cannot set value for object "+ref.toGenericString());
+//        }
+//        finally{
+//            ref.setAccessible(false);
+//        }
+//    }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void processElements(Class<?> classParent, Object parent, Object child){
@@ -136,21 +138,17 @@ public class XMLElementEnhancer implements Enhancer{
     private Class<?> findRootElement(Node node){
         for(Class<?> c : classes){
             XMLElement el = c.getAnnotation(XMLElement.class);
-            if(el == null){
-                log.error("No class definitiof found for "+node.getNodeName()+" element");
-                throw new RuntimeException("No class definitiof found for "+node.getNodeName()+" element");
-            }
             if(el.name().equals(node.getNodeName())){
                 return c;
             }
-            Set<Field> fields = getAllFields(c, withAnnotation(XMLElement.class));
-            for(Field f : fields){
-                f.setAccessible(true);
-                XMLElement e = f.getAnnotation(XMLElement.class);
-                if(e.name().equals(node.getNodeName())){
-                    return f.getType();
-                }
-            }
+//            Set<Field> fields = getAllFields(c, withAnnotation(XMLElement.class));
+//            for(Field f : fields){
+//                f.setAccessible(true);
+//                XMLElement e = f.getAnnotation(XMLElement.class);
+//                if(e.name().equals(node.getNodeName())){
+//                    return f.getType();
+//                }
+//            }
         }
         /**
          * !!!
