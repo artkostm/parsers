@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -20,8 +19,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import by.artkostm.androidparsers.core.annotations.XMLElement;
-import by.artkostm.androidparsers.core.annotations.XMLElements;
+import by.artkostm.androidparsers.core.annotations.xml.XMLElement;
+import by.artkostm.androidparsers.core.annotations.xml.XMLElements;
 import by.artkostm.androidparsers.core.builders.XMLObjectBuilder;
 
 public class XMLElementEnhancer implements Enhancer{
@@ -46,56 +45,54 @@ public class XMLElementEnhancer implements Enhancer{
     public Object enhance(Object source){
         Node node = (Node) source;
         Class<?> croot = findRootElement(node);
+        if(croot == null){
+            return null;
+        }
         XMLObjectBuilder builder = new XMLObjectBuilder<>(croot);
         Object root = builder.build(node);
         NodeList nl = node.getChildNodes();
         if (nl.getLength() > 0){
             for(int i = 0; i < nl.getLength(); i++){
                 if(nl.item(i) instanceof Element){
-//                    Field ref = null;
                     Object el = enhance(nl.item(i));
                     processElements(croot, root, el);
-//                    if(isElement(croot, nl.item(i).getNodeName(), ref)){
-//                        Object el = enhance(nl.item(i));
-//                        processElement(croot, root, el, ref);
-//                    }else{
-//                        Object el = enhance(nl.item(i));
-//                        processElements(croot, root, el);
-//                    }
                 }
             }
         }
         return root;
     }
     
-//    @SuppressWarnings("unchecked")
-//    private boolean isElement(Class<?> classParent, String childName, Field ref){
-//        Set<Field> fields = getAllFields(classParent, withAnnotation(XMLElement.class));
-//        for(Field f : fields){
-//            XMLElement el = f.getAnnotation(XMLElement.class);
-//            if(childName.equals(el.name())){
-//                ref = f;
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//    
-//    private void processElement(Class<?> classParent, Object parent, Object child, Field ref){
-//        ref.setAccessible(true);
-//        try {
-//            ref.set(parent, child);
-//        } catch (IllegalArgumentException | SecurityException | IllegalAccessException e) {
-//            log.error("Cannot set value for object  "+ref.toGenericString(), e);
-//            throw new RuntimeException("Cannot set value for object "+ref.toGenericString());
-//        }
-//        finally{
-//            ref.setAccessible(false);
-//        }
-//    }
+    /*
+    @SuppressWarnings("unchecked")
+    private boolean isElement(Class<?> classParent, String childName, Field ref){
+        Set<Field> fields = getAllFields(classParent, withAnnotation(XMLElement.class));
+        for(Field f : fields){
+            XMLElement el = f.getAnnotation(XMLElement.class);
+            if(childName.equals(el.name())){
+                ref = f;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void processElement(Class<?> classParent, Object parent, Object child, Field ref){
+        ref.setAccessible(true);
+        try {
+            ref.set(parent, child);
+        } catch (IllegalArgumentException | SecurityException | IllegalAccessException e) {
+            log.error("Cannot set value for object  "+ref.toGenericString(), e);
+            throw new RuntimeException("Cannot set value for object "+ref.toGenericString());
+        }
+        finally{
+            ref.setAccessible(false);
+        }
+    } 
+    */
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void processElements(Class<?> classParent, Object parent, Object child){
+        if(child == null) return;
         Set<Field> fieldsForElements = getAllFields(classParent, withAnnotation(XMLElements.class));
         if (fieldsForElements.size() != 1){
             return;
@@ -134,21 +131,12 @@ public class XMLElementEnhancer implements Enhancer{
      * @param node
      * @return class of found element if exists
      */
-    @SuppressWarnings("unchecked")
     private Class<?> findRootElement(Node node){
         for(Class<?> c : classes){
             XMLElement el = c.getAnnotation(XMLElement.class);
             if(el.name().equals(node.getNodeName())){
                 return c;
             }
-//            Set<Field> fields = getAllFields(c, withAnnotation(XMLElement.class));
-//            for(Field f : fields){
-//                f.setAccessible(true);
-//                XMLElement e = f.getAnnotation(XMLElement.class);
-//                if(e.name().equals(node.getNodeName())){
-//                    return f.getType();
-//                }
-//            }
         }
         /**
          * !!!
@@ -158,9 +146,20 @@ public class XMLElementEnhancer implements Enhancer{
          * !!!
          * !!!
          * !!!
+         * 
+           Set<Field> fields = getAllFields(c, withAnnotation(XMLElement.class));
+            for(Field f : fields){
+                f.setAccessible(true);
+                XMLElement e = f.getAnnotation(XMLElement.class);
+                if(e.name().equals(node.getNodeName())){
+                    return f.getType();
+                }
+            }
+         *   
          */
-        log.error("No class definitiof found for "+node.getNodeName()+" element");
-        throw new RuntimeException("No class definitiof found for "+node.getNodeName()+" element");
+        return null;
+//        log.error("No class definitiof found for "+node.getNodeName()+" element");
+//        throw new RuntimeException("No class definitiof found for "+node.getNodeName()+" element");
     }
     
     /**

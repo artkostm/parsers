@@ -10,9 +10,9 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import by.artkostm.androidparsers.core.annotations.XMLAttribute;
-import by.artkostm.androidparsers.core.annotations.XMLElement;
-import by.artkostm.androidparsers.core.annotations.XMLElements;
+import by.artkostm.androidparsers.core.annotations.xml.XMLAttribute;
+import by.artkostm.androidparsers.core.annotations.xml.XMLElement;
+import by.artkostm.androidparsers.core.annotations.xml.XMLElements;
 import by.artkostm.androidparsers.core.util.DOMUtil;
 
 public class XMLElementBuilder implements Builder<Document>{

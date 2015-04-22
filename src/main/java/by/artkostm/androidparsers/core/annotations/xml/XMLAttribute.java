@@ -1,4 +1,4 @@
-package by.artkostm.androidparsers.core.annotations;
+package by.artkostm.androidparsers.core.annotations.xml;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import static by.artkostm.androidparsers.core.FieldsResolver.*;
-import by.artkostm.androidparsers.core.annotations.Property;
+import by.artkostm.androidparsers.core.annotations.props.Property;
 
 public class PropsObjectBuilder<T> implements Builder<T> {
     

@@ -1,14 +1,13 @@
 package by.artkostm.androidparsers.core.context.internal;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import by.artkostm.androidparsers.core.context.ParserContext;
 import by.artkostm.androidparsers.core.enhancer.Enhancer;
 import by.artkostm.androidparsers.core.enhancer.PropertyEnhancer;
+import by.artkostm.androidparsers.core.util.Startegy;
 
 public class PropsParserContext implements ParserContext
 {
@@ -27,28 +26,20 @@ public class PropsParserContext implements ParserContext
             @SuppressWarnings("unchecked")
             @Override
             public T unmarshal(File file) {
-                BufferedReader br = null;
                 Object t = null;
-                try{
-                    FileReader reader = new FileReader(file);
-                    br = new BufferedReader(reader);
-                    String str = null;
-                    List<String> source = new ArrayList<>();
-                    while((str = br.readLine()) != null){
-                        if(!str.trim().isEmpty()){
-                            source.add(str);
-                        }
-                    }
-                    Enhancer e = new PropertyEnhancer(cls[0]);
-                    t = e.enhance(source);
-                } catch (IOException e1) {
-                    throw new RuntimeException("Can't read a file");
-                }finally{
-                    if(br != null){
-                        try{br.close();}catch(Exception e){}
-                    }
-                }
+                Enhancer e = new PropertyEnhancer(cls[0]);
+                t = e.enhance(file);
                 return (T)t;
+            }
+
+            @Override
+            public void setStrategy(Startegy s){}
+
+            @Override
+            public List<T> unmarshalAll(File file){
+                List<T> list = new ArrayList<>();
+                list.add(unmarshal(file));
+                return list;
             }
         };
         return u;

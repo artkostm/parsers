@@ -1,4 +1,4 @@
-package by.artkostm.androidparsers.core.annotations;
+package by.artkostm.androidparsers.core.annotations.props;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Properties {
-    
+@Target(ElementType.FIELD)
+public @interface Property {
+    public String name();
 }

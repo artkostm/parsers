@@ -1,6 +1,6 @@
 package by.artkostm.androidparsers.core.util;
 
-public class CSVStrategy {
+public class CSVStrategy implements Startegy{
 
 	/**
 	 * The default CSV strategy.
