@@ -14,7 +14,7 @@ import by.artkostm.androidparsers.core.annotations.xml.XMLElements;
 import by.artkostm.androidparsers.core.context.ParserContext;
 
 public class Sample{
-    public static void main(String[] args){
+        public static void main(String[] args){
         System.out.println("XML: ");
 	    xml();
 	    System.out.println("\nProperties: ");
