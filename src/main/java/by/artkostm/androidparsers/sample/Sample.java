@@ -26,8 +26,6 @@ public class Sample{
     private static void xml(){
         People people = new People();
         PrivateInfo info = new PrivateInfo();
-        Tt t = new Tt();
-        info.setTt(t);
         info.setID("2176527121"); info.setPASSPORT("BA212313");
         Man sasha = new Man(); sasha.setName("Sasha"); sasha.setAge(18); sasha.setEyeColor("green"); sasha.setHeight(182.0); sasha.setWeight(75.0); sasha.getpInfo().add(info);
         Man masha = new Man(); masha.setName("Masha"); masha.setAge(21); masha.setEyeColor("green"); masha.setHeight(182.0); masha.setWeight(75.0); masha.getpInfo().add(info);
@@ -215,12 +213,7 @@ public class Sample{
         private String ID;
         @XMLAttribute(name = "passport")
         private String PASSPORT;
-        @XMLElement(name = "test", type = Tt.class)
-        private Tt tt;
-        
-        public void setTt(Tt t){
-            this.tt = t;
-        }
+
         public String getID()
         {
             return ID;
@@ -237,11 +230,6 @@ public class Sample{
         {
             PASSPORT = pASSPORT;
         }        
-    }
-    
-    @XMLElement(name = "TEST")
-    public static class Tt{
-        
     }
     
     @SuppressWarnings("unused")
